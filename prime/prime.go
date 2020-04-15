@@ -28,6 +28,10 @@ func main() {
 }
 
 func isPrime(n int) int {
+	if n > 2 && n%2 == 0 {
+		return 0
+	}
+
 	limit := int(math.Sqrt(float64(n)))
 	for i := 2; i <= limit; i++ {
 		if n%i == 0 {
