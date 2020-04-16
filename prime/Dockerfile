@@ -1,11 +1,15 @@
-FROM golang:alpine
+FROM rust:latest AS build
 
-RUN mkdir /app
+WORKDIR /usr/src/prime
 
-COPY prime.go /app
+COPY . .
 
-WORKDIR /app
+RUN cargo build --release
 
-RUN go build prime.go
+RUN cargo install --path .
 
-ENTRYPOINT [ "/app/prime" ]
+FROM alpine:latest
+
+COPY --from=build /usr/local/cargo/bin/prime /bin
+
+ENTRYPOINT ["/bin/prime"]
