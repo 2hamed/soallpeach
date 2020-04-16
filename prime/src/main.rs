@@ -30,17 +30,17 @@ fn main() {
             },
         }
     }
-    let mut map = HashMap::new();
+    let mut line_map = HashMap::new();
     for _ in 0..count {
         let (i, p) = match rx.recv() {
-            Err(e) => break,
+            Err(_e) => break,
             Ok(v) => v,
         };
-        map.insert(i, p);
+        line_map.insert(i, p);
     }
 
     for i in 0..count {
-        println!("{}", map[&i]);
+        println!("{}", line_map[&i]);
     }
 }
 fn is_prime(n: u64) -> u8 {
