@@ -21,8 +21,16 @@ fn main() {
     }
 }
 fn is_prime(n: u64, map: &mut HashMap<u64, u8>) -> u8 {
-    if map.contains_key(&n) {
+    if n <= 1 {
         return 0;
+    }
+
+    if n == 2 || n == 3 {
+        return 1;
+    }
+
+    if map.contains_key(&n) {
+        return map[&n];
     }
 
     let sqrt = (n as f64).sqrt() as u64;
@@ -32,5 +40,6 @@ fn is_prime(n: u64, map: &mut HashMap<u64, u8>) -> u8 {
             return 0;
         }
     }
+    map.insert(n, 1);
     return 1;
 }
