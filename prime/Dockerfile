@@ -8,8 +8,8 @@ RUN cargo build --release
 
 RUN cargo install --path .
 
-FROM alpine:latest
+FROM scratch
 
-COPY --from=build /usr/local/cargo/bin/prime /bin
+COPY --from=build /usr/local/cargo/bin/prime /
 
-ENTRYPOINT ["/bin/prime"]
+ENTRYPOINT ["/prime"]

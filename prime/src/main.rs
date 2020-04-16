@@ -12,14 +12,14 @@ fn main() {
                     Err(e) => panic!(e),
                     Ok(line) => match line.parse::<u64>() {
                         Err(e) => panic!(e),
-                        Ok(n) => println!("{}", isPrime(n)),
+                        Ok(n) => println!("{}", is_prime(n)),
                     },
                 }
             }
         }
     }
 }
-fn isPrime(n: u64) -> u8 {
+fn is_prime(n: u64) -> u8 {
     let sqrt = (n as f64).sqrt() as u64;
     for i in 2..sqrt {
         if n % i == 0 {
