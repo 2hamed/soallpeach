@@ -28,7 +28,7 @@ fn is_prime(n: u64, map: &mut HashMap<u64, u8>) -> u8 {
     let sqrt = (n as f64).sqrt() as u64;
     for i in 2..sqrt {
         if n % i == 0 {
-            map.insert(i, 0);
+            map.insert(n, 0);
             return 0;
         }
     }
