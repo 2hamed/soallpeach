@@ -1,17 +1,11 @@
-FROM rust:latest AS build
+FROM golang:alpine
 
-RUN rustup target add x86_64-unknown-linux-musl
+RUN mkdir /app
 
-WORKDIR /usr/src/prime
+COPY prime.go /app
 
-COPY . .
+WORKDIR /app
 
-RUN cargo build --release --target x86_64-unknown-linux-musl
+RUN go build prime.go
 
-RUN cargo install --path . --target x86_64-unknown-linux-musl
-
-FROM alpine:latest
-
-COPY --from=build /usr/local/cargo/bin/prime /bin
-
-ENTRYPOINT [ "/bin/prime" ]
+ENTRYPOINT [ "/app/prime" ]
