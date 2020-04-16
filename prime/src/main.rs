@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 use std::io::BufRead;
+use std::sync::mpsc;
+use std::thread;
 use std::{env, fs, io};
 
 fn main() {
@@ -9,18 +11,39 @@ fn main() {
         Err(e) => panic!(e),
         Ok(file) => io::BufReader::new(file),
     };
-    let mut map: HashMap<u64, u8> = HashMap::new();
-    for line in reader.lines() {
+    let (tx, rx) = mpsc::channel();
+    let mut count = 0;
+
+    for (i, line) in reader.lines().enumerate() {
+        count = count + 1;
         match line {
             Err(e) => panic!(e),
             Ok(line) => match line.parse::<u64>() {
                 Err(e) => panic!(e),
-                Ok(n) => println!("{}", is_prime(n, &mut map)),
+                Ok(n) => {
+                    let txc = tx.clone();
+                    thread::spawn(move || {
+                        let p = is_prime(n);
+                        txc.send((i, p))
+                    });
+                }
             },
         }
     }
+    let mut map = HashMap::new();
+    for _ in 0..count {
+        let (i, p) = match rx.recv() {
+            Err(e) => break,
+            Ok(v) => v,
+        };
+        map.insert(i, p);
+    }
+
+    for i in 0..count {
+        println!("{}", map[&i]);
+    }
 }
-fn is_prime(n: u64, map: &mut HashMap<u64, u8>) -> u8 {
+fn is_prime(n: u64) -> u8 {
     if n <= 1 {
         return 0;
     }
@@ -29,17 +52,11 @@ fn is_prime(n: u64, map: &mut HashMap<u64, u8>) -> u8 {
         return 1;
     }
 
-    if map.contains_key(&n) {
-        return map[&n];
-    }
-
     let sqrt = (n as f64).sqrt() as u64;
     for i in 2..sqrt {
         if n % i == 0 {
-            map.insert(n, 0);
             return 0;
         }
     }
-    map.insert(n, 1);
     return 1;
 }
