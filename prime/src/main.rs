@@ -39,7 +39,7 @@ fn sieve_of_atkin(limit: i64, sieve: &mut HashMap<i64, bool>, limit_cache: &mut 
     }
     // println!("{} {}", limit, *limit_cache);
 
-    let mut x = 1;
+    let mut x = (*limit_cache as f64).sqrt() as i64 - 1;
     while x * x < limit {
         let mut y = 1;
         while y * y < limit {
