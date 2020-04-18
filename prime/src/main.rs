@@ -1,7 +1,11 @@
+use std::collections::HashMap;
 use std::io::BufRead;
 use std::{env, fs, io};
 
 fn main() {
+    let mut sieve: HashMap<i64, bool> = HashMap::new();
+    let mut limit_cache = 1;
+
     let args: Vec<String> = env::args().collect();
     let file_path = &args[1];
     let reader = match fs::File::open(file_path) {
@@ -13,28 +17,27 @@ fn main() {
             Err(e) => panic!(e),
             Ok(line) => match line.parse::<i64>() {
                 Err(e) => panic!(e),
-                Ok(n) => println!(
-                    "{}",
-                    if *sieve_of_atkin(n).last().unwrap() {
-                        1
-                    } else {
-                        0
-                    }
-                ),
+                Ok(n) => {
+                    sieve_of_atkin(n, &mut sieve, &mut limit_cache);
+                    println!(
+                        "{}",
+                        if sieve.contains_key(&n) && sieve[&n] {
+                            1
+                        } else {
+                            0
+                        }
+                    )
+                }
             },
         }
     }
 }
 
-fn sieve_of_atkin(limit: i64) -> Vec<bool> {
-    let mut sieve: Vec<bool> = (0..(limit + 1))
-        .map(|i| {
-            if i == 2 || i == 3 || i == 5 {
-                return true;
-            }
-            return false;
-        })
-        .collect();
+fn sieve_of_atkin(limit: i64, sieve: &mut HashMap<i64, bool>, limit_cache: &mut i64) {
+    if limit < *limit_cache {
+        return;
+    }
+    // println!("{} {}", limit, *limit_cache);
 
     let mut x = 1;
     while x * x < limit {
@@ -42,15 +45,15 @@ fn sieve_of_atkin(limit: i64) -> Vec<bool> {
         while y * y < limit {
             let n = (4 * x * x) + (y * y);
             if n <= limit && (n % 12 == 1 || n % 12 == 5) {
-                sieve[n as usize] ^= true;
+                sieve.insert(n, true);
             }
             let n = (3 * x * x) + (y * y);
             if n <= limit && n % 12 == 7 {
-                sieve[n as usize] ^= true;
+                sieve.insert(n, true);
             }
             let n = (3 * x * x) - (y * y);
             if x > y && n <= limit && n % 12 == 11 {
-                sieve[n as usize] ^= true;
+                sieve.insert(n, true);
             }
             y += 1;
         }
@@ -58,12 +61,12 @@ fn sieve_of_atkin(limit: i64) -> Vec<bool> {
     }
     let mut r = 5;
     while r * r < limit {
-        if sieve[r as usize] {
+        if sieve.contains_key(&r) && sieve[&r] {
             for i in (r * r..limit).step_by((r * r) as usize) {
-                sieve[i as usize] = false;
+                sieve.insert(i, false);
             }
         }
         r += 1;
     }
-    sieve
+    *limit_cache = limit;
 }
