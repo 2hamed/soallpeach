@@ -10,11 +10,11 @@ fn main() {
         Err(e) => panic!(e),
         Ok(file) => io::BufReader::new(file),
     };
-    let mut map: HashMap<u64, u8> = HashMap::new();
+    let mut map: HashMap<u32, u8> = HashMap::new();
     for line in reader.lines() {
         match line {
             Err(e) => panic!(e),
-            Ok(line) => match line.parse::<u64>() {
+            Ok(line) => match line.parse::<u32>() {
                 Err(e) => panic!(e),
                 Ok(n) => {
                     output.push((is_prime(n, &mut map) + 48) as char);
@@ -25,7 +25,7 @@ fn main() {
     }
     print!("{}", output);
 }
-fn is_prime(n: u64, map: &mut HashMap<u64, u8>) -> u8 {
+fn is_prime(n: u32, map: &mut HashMap<u32, u8>) -> u8 {
     if n <= 1 {
         return 0;
     }
@@ -38,7 +38,7 @@ fn is_prime(n: u64, map: &mut HashMap<u64, u8>) -> u8 {
         return map[&n];
     }
 
-    let sqrt = (n as f64).sqrt() as u64;
+    let sqrt = (n as f64).sqrt() as u32;
     for i in 2..sqrt {
         if n % i == 0 {
             map.insert(n, 0);
