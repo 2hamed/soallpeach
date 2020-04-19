@@ -38,12 +38,13 @@ fn is_prime(n: u32, map: &mut HashMap<u32, char>) -> char {
         return map[&n];
     }
 
-    let sqrt = (n as f64).sqrt() as u32;
-    for i in 2..sqrt {
+    let mut i = 2;
+    while i * i < n {
         if n % i == 0 {
             map.insert(n, '0');
             return '0';
         }
+        i += 1;
     }
     map.insert(n, '1');
     return '1';
