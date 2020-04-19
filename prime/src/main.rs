@@ -6,24 +6,22 @@ fn main() {
     let mut output = String::new();
     let args: Vec<String> = env::args().collect();
     let file_path = &args[1];
-    let reader = match fs::File::open(file_path) {
-        Err(e) => panic!(e),
-        Ok(file) => io::BufReader::new(file),
-    };
-    let mut map: HashMap<u32, char> = HashMap::new();
-    for line in reader.lines() {
-        match line {
-            Err(e) => panic!(e),
-            Ok(line) => match line.parse::<u32>() {
+    if let Ok(file) = fs::File::open(file_path) {
+        let reader = io::BufReader::new(file);
+        let mut map: HashMap<u32, char> = HashMap::new();
+        for line in reader.lines() {
+            match line {
                 Err(e) => panic!(e),
-                Ok(n) => {
-                    output.push(is_prime(n, &mut map));
-                    output.push('\n');
+                Ok(line) => {
+                    if let Ok(n) = line.parse::<u32>() {
+                        output.push(is_prime(n, &mut map));
+                        output.push('\n');
+                    }
                 }
-            },
+            }
         }
-    }
-    print!("{}", output);
+        print!("{}", output);
+    };
 }
 fn is_prime(n: u32, map: &mut HashMap<u32, char>) -> char {
     if n <= 1 {
