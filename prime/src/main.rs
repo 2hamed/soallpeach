@@ -3,6 +3,7 @@ use std::io::BufRead;
 use std::{env, fs, io};
 
 fn main() {
+    let mut output = String::new();
     let args: Vec<String> = env::args().collect();
     let file_path = &args[1];
     let reader = match fs::File::open(file_path) {
@@ -15,10 +16,14 @@ fn main() {
             Err(e) => panic!(e),
             Ok(line) => match line.parse::<u64>() {
                 Err(e) => panic!(e),
-                Ok(n) => println!("{}", is_prime(n, &mut map)),
+                Ok(n) => {
+                    output.push((is_prime(n, &mut map) + 48) as char);
+                    output.push('\n');
+                }
             },
         }
     }
+    print!("{}", output);
 }
 fn is_prime(n: u64, map: &mut HashMap<u64, u8>) -> u8 {
     if n <= 1 {
